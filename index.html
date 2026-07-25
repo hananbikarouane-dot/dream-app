@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تفسير الأحلام بالحكمة</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #fcfcfc;
+            font-family: system-ui, -apple-system, sans-serif;
+            color: #2d3748;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .app-container {
+            width: 100%;
+            max-width: 650px;
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .app-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .app-header h1 {
+            font-size: 1.5rem;
+            color: #1a202c;
+            margin: 0 0 5px 0;
+        }
+        .app-header p {
+            color: #718096;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+        .chat-stream {
+            flex: 1;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .message {
+            padding: 14px 18px;
+            border-radius: 10px;
+            line-height: 1.6;
+            font-size: 0.95rem;
+            max-width: 85%;
+            white-space: pre-line;
+        }
+        .message.ai {
+            background-color: #f7fafc;
+            color: #2d3748;
+            border-right: 3px solid #3182ce;
+            align-self: flex-start;
+        }
+        .message.user {
+            background-color: #ebf8ff;
+            color: #2b6cb0;
+            align-self: flex-end;
+        }
+        .input-box {
+            margin-top: 15px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        textarea {
+            width: 100%;
+            border: none;
+            resize: none;
+            outline: none;
+            font-family: inherit;
+            font-size: 0.95rem;
+            color: #2d3748;
+            min-height: 50px;
+            max-height: 120px;
+            box-sizing: border-box;
+            background: transparent;
+        }
+        .input-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #edf2f7;
+            padding-top: 8px;
+        }
+        .note {
+            font-size: 0.75rem;
+            color: #a0aec0;
+        }
+        button {
+            background-color: #3182ce;
+            color: white;
+            border: none;
+            padding: 6px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background-color: #2b6cb0;
+        }
+        button:disabled {
+            background-color: #cbd5e0;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+
+    <div class='app-container'>
+        <div class='app-header'>
+            <h1>تفسير الأحلام بالحكمة</h1>
+            <p>على منهج سورة يوسف عليه السلام</p>
+        </div>
+
+        <div class='chat-stream' id='chatBox'>
+            <div class='message ai'>
+                أهلاً بك. اطمئن واكتب رؤياك هنا، وسنجتهد في إيجاز تأويلها بكل حكمة وبشارة.
+            </div>
+        </div>
+
+        <div class='input-box'>
+            <textarea id='dreamInput' placeholder='اكتب رؤياك هنا...'></textarea>
+            <div class='input-footer'>
+                <span class='note'>التفسير استئناس والعلم عند الله.</span>
+                <button id='sendBtn' type='button'>إرسال</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const sendBtn = document.getElementById('sendBtn');
+            const input = document.getElementById('dreamInput');
+            const chatBox = document.getElementById('chatBox');
+
+            sendBtn.addEventListener('click', async function() {
+                const text = input.value.trim();
+                if (!text) return;
+
+                input.disabled = true;
+                sendBtn.disabled = true;
+
+                const userDiv = document.createElement('div');
+                userDiv.className = 'message user';
+                userDiv.textContent = text;
+                chatBox.appendChild(userDiv);
+
+                input.value = '';
+                chatBox.scrollTop = chatBox.scrollHeight;
+
+                const loadingDiv = document.createElement('div');
+                loadingDiv.className = 'message ai';
+                loadingDiv.textContent = 'جاري التأمل...';
+                chatBox.appendChild(loadingDiv);
+                chatBox.scrollTop = chatBox.scrollHeight;
+
+                const apiKey = "AQ.Ab8RN6IRnJic8hj6nqvTMiG27c5Jd07CljloPnvn4M4-BrtE6Q";
+                const systemInstruction = "أنت معبر أحلام حكيم على منهج سيدنا يوسف عليه السلام. أجب بإيجاز تام وبدون مقدمات طويلة. حدد باختصار إن كانت بشارة أو تحذيراً هادئاً، واختم بنصيحة عملية ودعاء قصير. تذكر أن العلم عند الله.";
+                
+                // استخدام الموديل المستقر المحدث
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+
+                const payload = {
+                    "contents": [
+                        {
+                            "parts": [
+                                { "text": systemInstruction + "\n\nالرؤيا: " + text }
+                            ]
+                        }
+                    ]
+                };
+
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(payload)
+                    });
+
+                    const jsonResponse = await response.json();
+                    chatBox.removeChild(loadingDiv);
+
+                    const aiDiv = document.createElement('div');
+                    aiDiv.className = 'message ai';
+
+                    if (jsonResponse.candidates && jsonResponse.candidates[0].content.parts[0].text) {
+                        aiDiv.textContent = jsonResponse.candidates[0].content.parts[0].text;
+                    } else if (jsonResponse.error) {
+                        aiDiv.textContent = "خطأ من الخادم: " + jsonResponse.error.message;
+                    } else {
+                        aiDiv.textContent = "عذراً، حدث خطأ في الرد.";
+                    }
+
+                    chatBox.appendChild(aiDiv);
+
+                } catch (error) {
+                    chatBox.removeChild(loadingDiv);
+                    const errorDiv = document.createElement('div');
+                    errorDiv.className = 'message ai';
+                    errorDiv.textContent = "خطأ في الاتصال بالشبكة.";
+                    chatBox.appendChild(errorDiv);
+                }
+
+                input.disabled = false;
+                sendBtn.disabled = false;
+                input.focus();
+                chatBox.scrollTop = chatBox.scrollHeight;
+            });
+        });
+    </script>
+</body>
+</html>
